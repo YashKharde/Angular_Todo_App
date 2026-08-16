@@ -1,0 +1,45 @@
+<main class="page-shell">
+  <section class="todo-card" aria-labelledby="page-title">
+    <header>
+      <p class="eyebrow">YOUR DAILY SPACE</p>
+      <h1 id="page-title">Things to do.</h1>
+      <p class="subtitle">Keep the little things from slipping away.</p>
+    </header>
+
+    <form class="task-form" (ngSubmit)="saveTask()">
+      <label class="sr-only" for="task-input">Task description</label>
+      <input id="task-input" name="task" [ngModel]="taskText()" (ngModelChange)="taskText.set($event)"
+        [placeholder]="editingId() ? 'Update your task' : 'What needs to be done?'" autocomplete="off" maxlength="140" />
+      <button class="primary-button" type="submit">{{ editingId() ? 'Save changes' : 'Add task' }}</button>
+      @if (editingId()) { <button class="cancel-button" type="button" (click)="cancelEdit()">Cancel</button> }
+    </form>
+
+    <div class="summary" aria-live="polite">
+      <span>{{ remaining() }} {{ remaining() === 1 ? 'task' : 'tasks' }} left</span>
+      @if (completed() > 0) { <button type="button" (click)="clearCompleted()">Clear completed</button> }
+    </div>
+
+    @if (todos().length) {
+      <ul class="task-list">
+        @for (todo of todos(); track todo.id) {
+          <li class="task" [class.done]="todo.completed">
+            <button class="check-button" type="button" (click)="toggleTask(todo.id)" [attr.aria-label]="todo.completed ? 'Mark task incomplete' : 'Mark task complete'">
+              @if (todo.completed) { <span>✓</span> }
+            </button>
+            <span class="task-title">{{ todo.title }}</span>
+            <div class="task-actions">
+              <button type="button" (click)="editTask(todo)" aria-label="Edit task">Edit</button>
+              <button type="button" (click)="deleteTask(todo.id)" aria-label="Delete task">Delete</button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="empty-state">
+        <div class="empty-icon">✦</div>
+        <h2>Your list is clear</h2>
+        <p>Add a task above to get started.</p>
+      </div>
+    }
+  </section>
+</main>
